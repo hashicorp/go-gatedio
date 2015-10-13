@@ -1,3 +1,5 @@
+// gatedio provides wrappers around the io.ReadWriter, io.Writer, and io.Reader
+// interfaces to support concurrent usage and access across multiple goroutines.
 package gatedio
 
 import (
