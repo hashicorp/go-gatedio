@@ -25,16 +25,15 @@ func TestBuffer_write(t *testing.T) {
 		go func() { buf.Write([]byte("a")) }()
 	}
 
+	bytesLen := func() int {
+		buf.Lock()
+		defer buf.Unlock()
+		return buf.rw.(*bytes.Buffer).Len()
+	}
+
 	doneCh := make(chan struct{})
 	go func() {
 		defer close(doneCh)
-
-		bytesLen := func() int {
-			buf.Lock()
-			defer buf.Unlock()
-			return buf.rw.(*bytes.Buffer).Len()
-		}
-
 		for bytesLen() < size {
 			time.Sleep(5 * time.Millisecond)
 		}
@@ -43,8 +42,7 @@ func TestBuffer_write(t *testing.T) {
 	select {
 	case <-doneCh:
 	case <-time.After(500 * time.Millisecond):
-		b3 := make([]byte, size)
-		t.Fatalf("bad: %d", len(b3))
+		t.Fatalf("bad: %d", bytesLen())
 	}
 }
 
@@ -66,16 +64,15 @@ func TestWriter_write(t *testing.T) {
 		go func() { buf.Write([]byte("a")) }()
 	}
 
+	bytesLen := func() int {
+		buf.Lock()
+		defer buf.Unlock()
+		return buf.rw.(*bytes.Buffer).Len()
+	}
+
 	doneCh := make(chan struct{})
 	go func() {
 		defer close(doneCh)
-
-		bytesLen := func() int {
-			buf.Lock()
-			defer buf.Unlock()
-			return buf.rw.(*bytes.Buffer).Len()
-		}
-
 		for bytesLen() < size {
 			time.Sleep(5 * time.Millisecond)
 		}
@@ -84,8 +81,7 @@ func TestWriter_write(t *testing.T) {
 	select {
 	case <-doneCh:
 	case <-time.After(500 * time.Millisecond):
-		b3 := make([]byte, size)
-		t.Fatalf("bad: %d", len(b3))
+		t.Fatalf("bad: %d", bytesLen())
 	}
 }
 
@@ -111,16 +107,15 @@ func TestReader_reader(t *testing.T) {
 		go func() { buf.Read([]byte("a")) }()
 	}
 
+	bytesLen := func() int {
+		buf.Lock()
+		defer buf.Unlock()
+		return buf.rw.(*bytes.Buffer).Len()
+	}
+
 	doneCh := make(chan struct{})
 	go func() {
 		defer close(doneCh)
-
-		bytesLen := func() int {
-			buf.Lock()
-			defer buf.Unlock()
-			return buf.rw.(*bytes.Buffer).Len()
-		}
-
 		for bytesLen() > 0 {
 			time.Sleep(5 * time.Millisecond)
 		}
@@ -129,7 +124,6 @@ func TestReader_reader(t *testing.T) {
 	select {
 	case <-doneCh:
 	case <-time.After(500 * time.Millisecond):
-		b3 := make([]byte, size)
-		t.Fatalf("bad: %d", len(b3))
+		t.Fatalf("bad: %d", bytesLen())
 	}
 }
