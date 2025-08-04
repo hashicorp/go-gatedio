@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // gatedio provides wrappers around the io.ReadWriter, io.Writer, and io.Reader
 // interfaces to support concurrent usage and access across multiple goroutines.
 package gatedio
